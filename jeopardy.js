@@ -24,7 +24,6 @@ let allCategoryIDs = [];
 let sixIDs= [];
 let $table = $('#jeopardy')
 let categories = [];
-let array = ['pikachu', 'raichu', 'mewtoo', 'charmander', 'squirtle']
 
 
 /** Get NUM_CATEGORIES random category from API.
@@ -93,14 +92,9 @@ async function getCategory() {
         });
     
     }
-
-    
-
         generateTable()
     }
  
-
-
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
@@ -114,9 +108,7 @@ async function getCategory() {
 
 async function fillTable() {
 
-
 }
-
 
 function generateTable() {
     // creates a <table> element and a <tbody> element
@@ -131,9 +123,13 @@ function generateTable() {
 
         // creates a column with names
         for (let j = 0; j < 6; j++) {
+
+            let question = (`Question: ${categories[j].clues[0][i].question}`);
+            let answer = (`Answer: ${categories[j].clues[0][i].answer}`);   
             let cell = document.createElement("td");
-            cell.innerText = (`Question: ${categories[j].clues[0][i].question}`);
-            cell.setAttribute('id','hello')
+            cell.innerText = question;
+            
+            cell.setAttribute('class',`${j} - ${i}`)
             row.appendChild(cell);
         }
 
@@ -149,6 +145,24 @@ function generateTable() {
     tbl.setAttribute("border", "2");
 
 }
+
+
+
+// Get the classID when clicked
+document.addEventListener('click', (e)=> {
+    // Get element class(es)
+    let elementClass = e.target.className;
+    // If element has class(es)
+    if (elementClass !== '') {
+      console.log(elementClass);
+      elementClass.setAttribute('className', 'testing')
+    }
+    // If element has no classes
+    else {
+      console.log('An element without a class was clicked');
+    }
+})
+
 
 
 
@@ -233,12 +247,3 @@ btn.addEventListener('click', hideLoadingView);
 
 // TODO
 
-
-const td = document.querySelector('tbody');
-
-td.addEventListener('click', getAnswer);
-
-
-async function getAnswer(){
-    console.log(`${categories[0].clues[0][0].answer}`)
-}

@@ -11,3 +11,12 @@
  .hello {
   visibility: hidden;
 }
+
+.toRemove {
+  visibility: hidden;
+}
+
+
+body { 
+background-color: rgb(216, 225, 204);
+}
