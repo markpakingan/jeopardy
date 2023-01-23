@@ -1,69 +1,46 @@
-// categories is the main data structure for the app; it looks like this:
-
-//  [
-//    { title: "Math",
-//      clues: [
-//        {question: "2+2", answer: 4, showing: null},
-//        {question: "1+1", answer: 2, showing: null}
-//        ...
-//      ],
-//    },
-//    { title: "Literature",
-//      clues: [
-//        {question: "Hamlet Author", answer: "Shakespeare", showing: null},
-//        {question: "Bell Jar Author", answer: "Plath", showing: null},
-//        ...
-//      ],
-//    },
-//    ...
-//  ]
-
-
 let sixRandomCategories = [];
 let allCategoryIDs = [];
-let sixIDs= [];
-let $table = $('#jeopardy')
+let sixIDs = [];
+let $table = $("#jeopardy");
 let categories = [];
-
 
 /** Get NUM_CATEGORIES random category from API.
  *
  * Returns array of category ids
  */
 
-
 async function getCategoryIds() {
-
-    const response = await axios.get("http://jservice.io/api/categories?count=100")
-
+    const response = await axios.get(
+        "http://jservice.io/api/categories?count=100"
+    );
 
     let allCategoryIds = response.data.map(function (value) {
         return value.id;
     });
 
     for (let id of allCategoryIds) {
-        allCategoryIDs.push(id)
+        allCategoryIDs.push(id);
     }
 
     // Get 6 Random Categories with Titles
 
-    let randomSix = _.shuffle(allCategoryIDs).slice(0,6)
-    console.log("Random 6:", randomSix)
-    
+    let randomSix = _.shuffle(allCategoryIDs).slice(0, 6);
+    console.log("Random 6:", randomSix);
 
     for (let id of randomSix) {
-        const response = await axios.get(`http://jservice.io/api/category?id=${id}`);
+        const response = await axios.get(
+            `http://jservice.io/api/category?id=${id}`
+        );
 
         let singleCategoryDataTitle = await response.data;
-        console.log(singleCategoryDataTitle.title)
-        sixRandomCategories.push(singleCategoryDataTitle.title)
-        sixIDs.push(singleCategoryDataTitle.id)
+        console.log(singleCategoryDataTitle.title);
+        sixRandomCategories.push(singleCategoryDataTitle.title);
+        sixIDs.push(singleCategoryDataTitle.id);
     }
 
-    createHeader()
-    getCategory()
+    createHeader();
+    getCategory();
 }
-
 
 /** Return object with data about a category:
  *
@@ -78,23 +55,18 @@ async function getCategoryIds() {
  */
 
 async function getCategory() {
-
-    for (let id of sixIDs){
-
-        const response = await axios.get(`http://jservice.io/api/category?id=${id}`);
-
+    for (let id of sixIDs) {
+        const response = await axios.get(
+            `http://jservice.io/api/category?id=${id}`
+        );
 
         categories.push({
             title: [response.data.title],
-            clues: [response.data.clues]
-
-        
+            clues: [response.data.clues],
         });
-    
     }
-        generateTable()
-    }
- 
+    generateTable();
+}
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
@@ -104,17 +76,12 @@ async function getCategory() {
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-
-
-async function fillTable() {
-
-}
+async function fillTable() {}
 
 function generateTable() {
     // creates a <table> element and a <tbody> element
     const tbl = document.querySelector("#jeopardy");
     const tblBody = document.querySelector("#tbody");
-
 
     // creating all cells
     for (let i = 0; i < 5; i++) {
@@ -123,13 +90,12 @@ function generateTable() {
 
         // creates a column with names
         for (let j = 0; j < 6; j++) {
-
-            let question = (`Question: ${categories[j].clues[0][i].question}`);
-            let answer = (`Answer: ${categories[j].clues[0][i].answer}`);   
+            let question = `Question: ${categories[j].clues[0][i].question}`;
+            // let answer = `Answer: ${categories[j].clues[0][i].answer}`;
             let cell = document.createElement("td");
             cell.innerText = question;
-            
-            cell.setAttribute('class',`${j} - ${i}`)
+
+            cell.setAttribute("id", `${j} - ${i}`);
             row.appendChild(cell);
         }
 
@@ -143,46 +109,47 @@ function generateTable() {
     document.body.appendChild(tbl);
     // sets the border attribute of tbl to '2'
     tbl.setAttribute("border", "2");
-
 }
 
+// function replaceText() {
+//     let cell = document.getElementById(clickedID);
+//     cell.innerHTML = "testing";
+//   }
 
+//   document.getElementById(clickedID).addEventListener("click", replaceText);
 
 // Get the classID when clicked
-document.addEventListener('click', (e)=> {
+document.addEventListener("click", (e) => {
     // Get element class(es)
-    let elementClass = e.target.className;
+    let clickedID = e.target.id;
     // If element has class(es)
-    if (elementClass !== '') {
-      console.log(elementClass);
-      elementClass.setAttribute('className', 'testing')
+    if (clickedID !== "") {
+        console.log(clickedID);
+        let cell = document.getElementById(clickedID);
+        let answer = `Answer: ${categories[j].clues[0][i].answer}`;
+
+        //   console.log(cell)
+        cell.innerText = "This will show the answer";
     }
     // If element has no classes
     else {
-      console.log('An element without a class was clicked');
+        console.log("An element without an ID was clicked");
     }
-})
-
-
-
+});
 
 function createHeader() {
+    let header = document.querySelector("#thead");
+    let row = document.createElement("tr");
 
-    let header = document.querySelector('#thead');
-    let row = document.createElement('tr');
-
-
-    for (let j=0; j < 6; j++){
-        let cell = document.createElement('td');
+    for (let j = 0; j < 6; j++) {
+        let cell = document.createElement("td");
         let cellText = document.createTextNode(`${sixRandomCategories[j]}`);
         cell.appendChild(cellText);
         row.appendChild(cell);
     }
 
     header.appendChild(row);
-
 }
-
 
 /** Handle clicking on a clue: show the question or answer.
  *
@@ -192,30 +159,22 @@ function createHeader() {
  * - if currently "answer", ignore click
  * */
 
-
-function handleClick(evt) {
-}
+function handleClick(evt) {}
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
  */
 
-function showLoadingView() {
-
-}
-
+function showLoadingView() {}
 
 /** Remove the loading spinner and update the button used to fetch data. */
 
-function hideLoadingView
-() {
-    $('#start').remove();
+function hideLoadingView() {
+    $("#start").remove();
 
-    getCategoryIds()
+    getCategoryIds();
     // generateTable()
-    
 }
-
 
 /** Start game:
  *
@@ -224,20 +183,12 @@ function hideLoadingView
  * - create HTML table
  * */
 
+$("#spin-container").remove();
 
-$('#spin-container').remove();
+function setupAndStart() {}
 
-
-
-async function setupAndStart() {
-
-
-}
-
-
-
-const btn = document.querySelector('#start');
-btn.addEventListener('click', hideLoadingView);
+const btn = document.querySelector("#start");
+btn.addEventListener("click", hideLoadingView);
 
 /** On click of start / restart button, set up game. */
 
@@ -246,4 +197,3 @@ btn.addEventListener('click', hideLoadingView);
 /** On page load, add event handler for clicking clues */
 
 // TODO
-
