@@ -6,17 +6,23 @@
   #74119c
 */
 
-
-
- .hello {
-  visibility: hidden;
+.hello {
+    visibility: hidden;
 }
 
 .toRemove {
-  visibility: hidden;
+    visibility: hidden;
 }
 
+body {
+    background-color: rgb(216, 225, 204);
+}
 
-body { 
-background-color: rgb(216, 225, 204);
+/* table {
+    border: 2px;
+} */
+
+td,
+th {
+    border: 1px solid black;
 }
